@@ -51,12 +51,6 @@ npm run dev
 
 Truy cập địa chỉ localhost do Vite cung cấp.
 
-## 5. Kiểm thử
-
-```bash
-npm run test:run
-```
-
 ## 6. Build
 
 ```bash
