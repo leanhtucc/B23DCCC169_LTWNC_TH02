@@ -1,0 +1,31 @@
+{
+  "deadlines": [
+    {
+      "id": "1",
+      "subject": "Lập trình Web nâng cao",
+      "title": "Bài thực hành 01",
+      "dueDate": "2026-09-25",
+      "priority": "high",
+      "completed": false,
+      "createdAt": "2026-09-22"
+    },
+    {
+      "id": "2",
+      "subject": "Cơ sở dữ liệu",
+      "title": "Bài tập SQL",
+      "dueDate": "2026-09-20",
+      "priority": "medium",
+      "completed": false,
+      "createdAt": "2026-09-15"
+    },
+    {
+      "id": "3",
+      "subject": "Phân tích thiết kế hệ thống",
+      "title": "Vẽ biểu đồ UML",
+      "dueDate": "2026-09-28",
+      "priority": "low",
+      "completed": true,
+      "createdAt": "2026-09-18"
+    }
+  ]
+}
