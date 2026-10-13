@@ -1,4 +1,4 @@
-import { calcStats } from "./statsUtils";
+import { calcStats } from "../utils/statsUtils";
 import type { Deadline } from "../features/deadlines/deadlineTypes";
 
 describe("statsUtils Unit Tests", () => {

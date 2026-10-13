@@ -6,8 +6,8 @@ import deadlinesReducer, {
   bulkLoadDeadlines,
   clearDeadlines,
   fetchDeadlines,
-} from "./deadlinesSlice";
-import type { DeadlinesState, Deadline } from "./deadlineTypes";
+} from "../features/deadlines/deadlinesSlice";
+import type { DeadlinesState, Deadline } from "../features/deadlines/deadlineTypes";
 
 describe("deadlinesSlice Unit Tests", () => {
   const initialState: DeadlinesState = {

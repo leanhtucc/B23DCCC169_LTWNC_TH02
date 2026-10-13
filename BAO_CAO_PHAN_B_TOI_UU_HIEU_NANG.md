@@ -5,7 +5,6 @@
 - **Mã sinh viên**: B23DCCC169
 - **Lớp**: D23CQCN01-B
 - **Giảng viên hướng dẫn**: Thầy `nvnhan`
-- **Repository**: [https://github.com/leanhtucc/B23DCCC169_LTWNC_TH02](https://github.com/leanhtucc/B23DCCC169_LTWNC_TH02)
 
 ---
 

@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { AssignmentList } from "./AssignmentList";
-import type { Deadline } from "./deadlineTypes";
+import { AssignmentList } from "../features/deadlines/AssignmentList";
+import type { Deadline } from "../features/deadlines/deadlineTypes";
 
 describe("AssignmentList Async & State Tests", () => {
   const mockDeadlines: Deadline[] = [

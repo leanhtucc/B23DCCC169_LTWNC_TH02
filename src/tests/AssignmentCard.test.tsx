@@ -1,8 +1,8 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { AssignmentCard } from "./AssignmentCard";
-import type { Deadline } from "./deadlineTypes";
-import { usePinStore } from "../../stores/usePinStore";
+import { AssignmentCard } from "../features/deadlines/AssignmentCard";
+import type { Deadline } from "../features/deadlines/deadlineTypes";
+import { usePinStore } from "../stores/usePinStore";
 
 describe("AssignmentCard Component Tests", () => {
   const mockDeadline: Deadline = {

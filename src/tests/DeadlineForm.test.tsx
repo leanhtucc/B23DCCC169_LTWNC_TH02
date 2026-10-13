@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { DeadlineForm } from "./DeadlineForm";
+import { DeadlineForm } from "../features/deadlines/DeadlineForm";
 
 describe("DeadlineForm Component Tests", () => {
   test("9. Validate lỗi khi submit form với các trường bị bỏ trống", async () => {

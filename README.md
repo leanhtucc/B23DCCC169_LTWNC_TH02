@@ -25,7 +25,6 @@
     - [3. Chạy Kiểm thử (Testing)](#3-chạy-kiểm-thử-testing)
     - [4. Kiểm tra Linter \& Build Production](#4-kiểm-tra-linter--build-production)
   - [5. Hướng dẫn Chụp ảnh Minh chứng Báo cáo](#5-hướng-dẫn-chụp-ảnh-minh-chứng-báo-cáo)
-  - [6. Mời Giảng viên Collaborator](#6-mời-giảng-viên-collaborator)
 
 ---
 
@@ -119,16 +118,16 @@ flowchart TD
 Triển khai đầy đủ **24 Test Cases** (vượt xa yêu cầu 12 test cases) thuộc **4 nhóm**:
 
 - **Nhóm 1: Unit Tests (14 cases)**:
-  - `src/utils/dateUtils.test.ts`: Kiểm tra `isOverdue` (quá hạn, đã hoàn thành, tương lai), `calcDaysLeft` / `getDaysRemaining` (quá khứ, tương lai, biên hôm nay = 0), `getDeadlineLabel`.
-  - `src/utils/statsUtils.test.ts`: Kiểm tra `calcStats` với mảng rỗng, tính tổng bài, chưa hoàn thành, quá hạn, đã hoàn thành và phân bổ theo môn.
-  - `src/features/deadlines/deadlinesSlice.test.ts`: Kiểm tra reducers thêm bài, đảo trạng thái, xóa, nạp hàng loạt, xóa sạch, và extraReducers (`pending`, `fulfilled`, `rejected`).
+  - `src/tests/dateUtils.test.ts`: Kiểm tra `isOverdue` (quá hạn, đã hoàn thành, tương lai), `calcDaysLeft` / `getDaysRemaining` (quá khứ, tương lai, biên hôm nay = 0), `getDeadlineLabel`.
+  - `src/tests/statsUtils.test.ts`: Kiểm tra `calcStats` với mảng rỗng, tính tổng bài, chưa hoàn thành, quá hạn, đã hoàn thành và phân bổ theo môn.
+  - `src/tests/deadlinesSlice.test.ts`: Kiểm tra reducers thêm bài, đảo trạng thái, xóa, nạp hàng loạt, xóa sạch, và extraReducers (`pending`, `fulfilled`, `rejected`).
 - **Nhóm 2: Component Tests (5 cases)**:
-  - `src/features/deadlines/AssignmentCard.test.tsx`: Render đủ thông tin (tiêu đề, môn, hạn, độ ưu tiên), click "Hoàn thành" gọi `onToggle`, click "Ghim" cập nhật `usePinStore`.
-  - `src/features/deadlines/DeadlineForm.test.tsx`: Validate lỗi khi bỏ trống các trường, submit hợp lệ gọi `onSubmit` với dữ liệu chính xác.
+  - `src/tests/AssignmentCard.test.tsx`: Render đủ thông tin (tiêu đề, môn, hạn, độ ưu tiên), click "Hoàn thành" gọi `onToggle`, click "Ghim" cập nhật `usePinStore`.
+  - `src/tests/DeadlineForm.test.tsx`: Validate lỗi khi bỏ trống các trường, submit hợp lệ gọi `onSubmit` với dữ liệu chính xác.
 - **Nhóm 3: Async Tests (3 cases)**:
-  - `src/features/deadlines/AssignmentList.test.tsx`: Trạng thái `loading` hiển thị "Đang tải dữ liệu...", nạp dữ liệu thành công, trạng thái `failed` hiển thị thông báo lỗi và nút "Thử lại".
+  - `src/tests/AssignmentList.test.tsx`: Trạng thái `loading` hiển thị "Đang tải dữ liệu...", nạp dữ liệu thành công, trạng thái `failed` hiển thị thông báo lỗi và nút "Thử lại".
 - **Nhóm 4: Custom Hook Tests (2 cases)**:
-  - `src/hooks/useDebounce.test.ts`: Giữ nguyên trước 300ms, cập nhật sau 300ms, hủy timer cũ khi gõ liên tục.
+  - `src/tests/useDebounce.test.ts`: Giữ nguyên trước 300ms, cập nhật sau 300ms, hủy timer cũ khi gõ liên tục.
 
 **Kết quả Code Coverage thư mục `src/features/`**:
 - **Statements**: **81.97%** (Yêu cầu $\ge$ 70% — **ĐẠT**)
@@ -213,13 +212,3 @@ Sinh viên chuẩn bị các ảnh chụp màn hình sau để đưa vào báo c
 4. **Ảnh Kết quả Chạy Test & Coverage**:
    - Mở terminal chạy `npm run test:coverage`.
    - Chụp ảnh màn hình terminal hiển thị **7 test suites passed, 24 tests passed (100%)** và bảng Coverage cho `features/` đạt trên 80%.
-
----
-
-## 6. Mời Giảng viên Collaborator
-
-Theo yêu cầu nộp bài, hãy thêm tài khoản của giảng viên vào repository:
-1. Truy cập repository của bạn: [https://github.com/leanhtucc/B23DCCC169_LTWNC_TH02](https://github.com/leanhtucc/B23DCCC169_LTWNC_TH02)
-2. Chọn **Settings** $\rightarrow$ chọn **Collaborators** ở thanh bên trái.
-3. Bấm **Add people** $\rightarrow$ nhập username của giảng viên: `nvnhan`.
-4. Bấm **Add nvnhan to this repository**.

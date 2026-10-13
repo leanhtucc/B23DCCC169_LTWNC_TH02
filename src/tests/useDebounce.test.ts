@@ -1,5 +1,5 @@
 import { renderHook, act } from "@testing-library/react";
-import { useDebounce } from "./useDebounce";
+import { useDebounce } from "../hooks/useDebounce";
 
 describe("useDebounce Custom Hook Tests", () => {
   beforeEach(() => {
@@ -61,7 +61,7 @@ describe("useDebounce Custom Hook Tests", () => {
     act(() => {
       jest.advanceTimersByTime(150);
     });
-    // Đã đủ 300ms từ lần đổi cuối
+    // Đã đủ 300ms kể từ lần gõ 'abc'
     expect(result.current).toBe("abc");
   });
 });
