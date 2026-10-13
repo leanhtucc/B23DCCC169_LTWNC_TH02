@@ -13,6 +13,8 @@ import type { CreateDeadlineInput } from "./features/deadlines/deadlineTypes";
 import { useAppDispatch } from "./app/hoos";
 import { useTheme } from "./context/ThemeContext";
 
+import { PerformanceModal } from "./features/deadlines/PerformanceModal";
+
 // Lazy loading cho thống kê (Code Splitting)
 const DeadlineStats = lazy(() => import("./features/deadlines/DeadlineStats"));
 
@@ -22,6 +24,7 @@ function App() {
   const { theme, toggleTheme } = useTheme();
 
   const [showForm, setShowForm] = useState(false);
+  const [showBenchmarkModal, setShowBenchmarkModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
   // Debounce tìm kiếm 300ms
@@ -125,6 +128,15 @@ function App() {
           <div className="toolbar-actions">
             <button
               type="button"
+              className="btn-benchmark"
+              onClick={() => setShowBenchmarkModal(true)}
+              title="Xem bảng đo lường và so sánh hiệu năng Trước vs Sau tối ưu"
+            >
+              📊 So sánh Hiệu năng (Trước vs Sau)
+            </button>
+
+            <button
+              type="button"
               className="btn-stress-test"
               onClick={handleStressTest}
               title="Tạo ngay 10.000 bài tập mẫu để kiểm tra Virtualization và Debounce"
@@ -142,6 +154,12 @@ function App() {
             </button>
           </div>
         </div>
+
+        {/* Modal So sánh Hiệu năng (Phần B: Mục 5 & 7) */}
+        <PerformanceModal
+          isOpen={showBenchmarkModal}
+          onClose={() => setShowBenchmarkModal(false)}
+        />
 
         {showForm && status === "succeeded" && (
           <DeadlineForm
