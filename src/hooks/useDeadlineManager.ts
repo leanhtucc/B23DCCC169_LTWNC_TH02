@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 
 import type {
   CreateDeadlineInput,
@@ -20,13 +20,26 @@ import {
   selectFilteredDeadlines,
 } from "../features/deadlines/deadlineSelectors";
 import { useAppDispatch, useAppSelector } from "../app/hoos";
+import { usePinStore } from "../stores/usePinStore";
 
 export function useDeadlineManager(today: Date) {
   const dispatch = useAppDispatch();
+  const pinnedIds = usePinStore((state) => state.pinnedIds);
 
-  const deadlines = useAppSelector((state) =>
+  const rawDeadlines = useAppSelector((state) =>
     selectFilteredDeadlines(state, today)
   );
+
+  const deadlines = useMemo(() => {
+    return [...rawDeadlines].sort((a, b) => {
+      const aPinned = pinnedIds.includes(a.id) ? 1 : 0;
+      const bPinned = pinnedIds.includes(b.id) ? 1 : 0;
+      if (aPinned !== bPinned) {
+        return bPinned - aPinned;
+      }
+      return 0;
+    });
+  }, [rawDeadlines, pinnedIds]);
 
   const allDeadlines = useAppSelector(
     selectDeadlines
