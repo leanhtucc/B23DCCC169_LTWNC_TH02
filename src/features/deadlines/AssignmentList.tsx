@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from "react";
-import { FixedSizeList, type ListChildComponentProps } from "react-window";
+import * as ReactWindow from "react-window";
+import type { ListChildComponentProps } from "react-window";
 import type { Deadline, LoadingStatus } from "./deadlineTypes";
 import { AssignmentCard } from "./AssignmentCard";
 import { DeadlineGroup } from "./DeadlineGroup";
@@ -17,6 +18,16 @@ export interface AssignmentListProps {
 
 const ITEM_HEIGHT = 135;
 const LIST_HEIGHT = 600;
+
+// Tương thích an toàn 100% cho cả CJS, ESM và cache pre-bundling của Vite
+const rwAny = ReactWindow as unknown as {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  FixedSizeList?: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  default?: { FixedSizeList?: any };
+};
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const VirtualizedList: any = rwAny.FixedSizeList || rwAny.default?.FixedSizeList;
 
 export const AssignmentList: React.FC<AssignmentListProps> = ({
   deadlines,
@@ -110,9 +121,9 @@ export const AssignmentList: React.FC<AssignmentListProps> = ({
         )}
       </div>
 
-      {isVirtualActive ? (
+      {isVirtualActive && VirtualizedList ? (
         <div className="virtual-list-wrapper">
-          <FixedSizeList
+          <VirtualizedList
             height={Math.min(LIST_HEIGHT, deadlines.length * ITEM_HEIGHT)}
             itemCount={deadlines.length}
             itemSize={ITEM_HEIGHT}
@@ -120,7 +131,7 @@ export const AssignmentList: React.FC<AssignmentListProps> = ({
             className="virtual-scroll-viewport"
           >
             {Row}
-          </FixedSizeList>
+          </VirtualizedList>
         </div>
       ) : (
         <DeadlineGroup
