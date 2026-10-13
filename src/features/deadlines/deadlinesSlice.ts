@@ -14,7 +14,6 @@ import type {
 import { getDeadlines } from "./deadlinesApi";
 import { getLocalDateString } from "../../utils/dateUtils";
 
-
 export const fetchDeadlines = createAsyncThunk<
   Deadline[],
   void,
@@ -37,10 +36,10 @@ export const fetchDeadlines = createAsyncThunk<
 );
 
 const initialState: DeadlinesState = {
-    items: [],
-    status: "idle",
-    error: null,
-    filter: "all"
+  items: [],
+  status: "idle",
+  error: null,
+  filter: "all",
 };
 
 const deadlinesSlice = createSlice({
@@ -85,6 +84,19 @@ const deadlinesSlice = createSlice({
     ) {
       state.filter = action.payload;
     },
+    bulkLoadDeadlines(
+      state,
+      action: PayloadAction<Deadline[]>
+    ) {
+      state.items = action.payload;
+      state.status = "succeeded";
+      state.error = null;
+    },
+    clearDeadlines(state) {
+      state.items = [];
+      state.status = "succeeded";
+      state.error = null;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -113,12 +125,15 @@ const deadlinesSlice = createSlice({
         }
       );
   },
-})
+});
+
 export const {
   addDeadline,
   toggleComplete,
   deleteDeadline,
   setFilter,
+  bulkLoadDeadlines,
+  clearDeadlines,
 } = deadlinesSlice.actions;
 
-export default deadlinesSlice.reducer
+export default deadlinesSlice.reducer;

@@ -1,15 +1,20 @@
-import { useEffect, useState } from "react";
+import { Suspense, lazy, useEffect, useState, useMemo, useCallback } from "react";
 
-import { DeadlineStats } from "./features/deadlines/DeadlineStats";
+import { StatsSkeleton } from "./features/deadlines/StatsSkeleton";
 import { DeadlineForm } from "./features/deadlines/DeadlineForm";
 import { DeadlineFilter } from "./features/deadlines/DeadlineFilter";
-import { DeadlineGroup } from "./features/deadlines/DeadlineGroup";
+import { AssignmentList } from "./features/deadlines/AssignmentList";
 import { fetchDeadlines } from "./features/deadlines/deadlinesSlice";
 import { useDeadlineManager } from "./hooks/useDeadlineManager";
 import { useToday } from "./hooks/useToday";
+import { useDebounce } from "./hooks/useDebounce";
+import { generateMockDeadlines } from "./utils/mockData";
 import type { CreateDeadlineInput } from "./features/deadlines/deadlineTypes";
 import { useAppDispatch } from "./app/hoos";
 import { useTheme } from "./context/ThemeContext";
+
+// Lazy loading cho thống kê (Code Splitting)
+const DeadlineStats = lazy(() => import("./features/deadlines/DeadlineStats"));
 
 function App() {
   const dispatch = useAppDispatch();
@@ -17,6 +22,10 @@ function App() {
   const { theme, toggleTheme } = useTheme();
 
   const [showForm, setShowForm] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // Debounce tìm kiếm 300ms
+  const debouncedSearch = useDebounce(searchQuery, 300);
 
   const {
     deadlines,
@@ -28,6 +37,8 @@ function App() {
     handleToggle,
     handleDelete,
     handleFilter,
+    handleBulkLoad,
+    handleClear,
   } = useDeadlineManager(today);
 
   useEffect(() => {
@@ -36,10 +47,40 @@ function App() {
     }
   }, [dispatch, status]);
 
-  const handleSubmit = (data: CreateDeadlineInput) => {
-    handleAdd(data);
-    setShowForm(false);
-  };
+  // Bộ lọc tìm kiếm kết hợp memoization
+  const visibleDeadlines = useMemo(() => {
+    if (!debouncedSearch.trim()) {
+      return deadlines;
+    }
+    const query = debouncedSearch.toLowerCase().trim();
+    return deadlines.filter(
+      (item) =>
+        item.title.toLowerCase().includes(query) ||
+        item.subject.toLowerCase().includes(query)
+    );
+  }, [deadlines, debouncedSearch]);
+
+  const handleSubmit = useCallback(
+    (data: CreateDeadlineInput) => {
+      handleAdd(data);
+      setShowForm(false);
+    },
+    [handleAdd]
+  );
+
+  const handleRetry = useCallback(() => {
+    void dispatch(fetchDeadlines());
+  }, [dispatch]);
+
+  const handleStressTest = useCallback(() => {
+    const mock = generateMockDeadlines(10000);
+    handleBulkLoad(mock);
+  }, [handleBulkLoad]);
+
+  const handleResetData = useCallback(() => {
+    handleClear();
+    void dispatch(fetchDeadlines());
+  }, [handleClear, dispatch]);
 
   return (
     <main className="dashboard">
@@ -73,6 +114,35 @@ function App() {
           </div>
         </header>
 
+        {/* Bảng điều khiển hiệu năng & Stress test */}
+        <div className="stress-test-toolbar">
+          <div className="toolbar-info">
+            <span className="dataset-indicator">
+              Hiện có: <strong>{allDeadlines.length.toLocaleString("vi-VN")}</strong> bài tập
+            </span>
+          </div>
+
+          <div className="toolbar-actions">
+            <button
+              type="button"
+              className="btn-stress-test"
+              onClick={handleStressTest}
+              title="Tạo ngay 10.000 bài tập mẫu để kiểm tra Virtualization và Debounce"
+            >
+              ⚡ Tạo 10.000 bài tập mẫu
+            </button>
+
+            <button
+              type="button"
+              className="btn-reset-data"
+              onClick={handleResetData}
+              title="Đặt lại dữ liệu về ban đầu"
+            >
+              🔄 Đặt lại dữ liệu
+            </button>
+          </div>
+        </div>
+
         {showForm && status === "succeeded" && (
           <DeadlineForm
             onSubmit={handleSubmit}
@@ -80,44 +150,52 @@ function App() {
           />
         )}
 
-        <DeadlineStats deadlines={allDeadlines} today={today} />
+        {/* Tải lười (React.lazy + Suspense) cho khối thống kê */}
+        <Suspense fallback={<StatsSkeleton />}>
+          <DeadlineStats deadlines={allDeadlines} today={today} />
+        </Suspense>
 
         <section className="deadline-section">
           <div className="section-header">
             <div>
               <h2>Danh sách bài tập</h2>
-              <p>Theo dõi các deadline quan trọng.</p>
+              <p>Theo dõi và tìm kiếm các deadline quan trọng.</p>
             </div>
+          </div>
+
+          {/* Thanh tìm kiếm phản hồi tức thì với useDebounce */}
+          <div className="search-box-wrapper">
+            <input
+              type="text"
+              className="search-input"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="🔍 Tìm kiếm bài tập theo tiêu đề hoặc môn học (Debounce 300ms)..."
+              aria-label="Tìm kiếm bài tập"
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                className="search-clear-btn"
+                onClick={() => setSearchQuery("")}
+                title="Xóa tìm kiếm"
+              >
+                ✕
+              </button>
+            )}
           </div>
 
           <DeadlineFilter value={filter} onChange={handleFilter} />
 
-          {status === "loading" && (
-            <div className="status-message">Đang tải dữ liệu...</div>
-          )}
-
-          {status === "failed" && (
-            <div className="error-message">
-              <p>{error}</p>
-              <button
-                type="button"
-                onClick={() => {
-                  void dispatch(fetchDeadlines());
-                }}
-              >
-                Thử lại
-              </button>
-            </div>
-          )}
-
-          {status === "succeeded" && (
-            <DeadlineGroup
-              deadlines={deadlines}
-              today={today}
-              onToggle={handleToggle}
-              onDelete={handleDelete}
-            />
-          )}
+          <AssignmentList
+            deadlines={visibleDeadlines}
+            today={today}
+            status={status}
+            error={error}
+            onToggle={handleToggle}
+            onDelete={handleDelete}
+            onRetry={handleRetry}
+          />
         </section>
       </div>
     </main>

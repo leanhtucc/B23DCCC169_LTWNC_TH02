@@ -2,11 +2,14 @@ import { useCallback, useMemo } from "react";
 
 import type {
   CreateDeadlineInput,
+  Deadline,
   DeadlineFilter,
 } from "../features/deadlines/deadlineTypes";
 
 import {
   addDeadline,
+  bulkLoadDeadlines,
+  clearDeadlines,
   deleteDeadline,
   setFilter,
   toggleComplete,
@@ -41,21 +44,10 @@ export function useDeadlineManager(today: Date) {
     });
   }, [rawDeadlines, pinnedIds]);
 
-  const allDeadlines = useAppSelector(
-    selectDeadlines
-  );
-
-  const filter = useAppSelector(
-    selectDeadlineFilter
-  );
-
-  const status = useAppSelector(
-    selectDeadlineStatus
-  );
-
-  const error = useAppSelector(
-    selectDeadlineError
-  );
+  const allDeadlines = useAppSelector(selectDeadlines);
+  const filter = useAppSelector(selectDeadlineFilter);
+  const status = useAppSelector(selectDeadlineStatus);
+  const error = useAppSelector(selectDeadlineError);
 
   const handleAdd = useCallback(
     (data: CreateDeadlineInput) => {
@@ -85,6 +77,17 @@ export function useDeadlineManager(today: Date) {
     [dispatch]
   );
 
+  const handleBulkLoad = useCallback(
+    (items: Deadline[]) => {
+      dispatch(bulkLoadDeadlines(items));
+    },
+    [dispatch]
+  );
+
+  const handleClear = useCallback(() => {
+    dispatch(clearDeadlines());
+  }, [dispatch]);
+
   return {
     deadlines,
     allDeadlines,
@@ -95,5 +98,7 @@ export function useDeadlineManager(today: Date) {
     handleToggle,
     handleDelete,
     handleFilter,
+    handleBulkLoad,
+    handleClear,
   };
 }
